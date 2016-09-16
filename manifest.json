@@ -16,6 +16,7 @@
     },
     "content_scripts": [{
     "matches": ["*://www.youtube.com/*"],
-    "js": ["content.js", "jquery-3.1.0.min.js"]
+    "js": ["jquery-3.1.0.min.js", "content.js"],
+    "run_at": "document_end"
   }]
 }
