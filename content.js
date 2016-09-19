@@ -2,44 +2,81 @@ var width;
 var offset;
 var height;
 
-chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-  console.log(response.farewell);
+var isTheatre = false;
+if (document.getElementsByClassName("ytp-size-button")[0].title == "Default view") {
+    isTheatre = true;
+} else {
+    isTheatre = false;
+}
 
-  width = $(body).innerWidth();
-  offset = $("#masthead-positioner").height();
-  height = $(window).height()-offset;
-
-
-  if ($(".ytp-size-button").attr("title")=="Default view") {
-      $("#player-api").css({left: 0});
-      $("#player-api").css({marginLeft: 0});
-      $("#player-api").height(height);
-      $("#player-api").width(width);
-      $("#placeholder-player").height(height);
-      $("video").height(height);
-      $("video").width(width);
-      $(".ytp-chrome-bottom").width(width-24);
-   }
+$(window).resize(function(){
+  changeSize();
 });
 
 chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.text == "setSize")
-      {
-        if ($(".ytp-size-button").attr("title")=="Default view") {
-            width = $(body).innerWidth();
-            offset = 50;
-            height = $(window).height()-offset;
+    function(request, sender, sendResponse) {
+        if (request.text == "setSize") {
+            if ($(".ytp-size-button").attr("title") == "Default view") {
+                width = $("body").innerWidth();
+                offset = 50;
+                height = $(window).height() - offset;
 
-            $("#player-api").css({left: 0});
-            $("#player-api").css({marginLeft: 0});
-            $("#player-api").height(height);
-            $("#player-api").width(width);
-            $("video").height(height);
-            $("video").width(width);
-            $("video").css({top:0});
-            $(".ytp-chrome-bottom").width(width-24);
-            $("#placeholder-player").height(height);
-         }
-      }
-  });
+                setPlayer();
+            }
+        }
+    });
+
+$(".ytp-size-button").click(function() {
+  changeSize();
+});
+
+function changeSize(){
+  if (isTheatre) {
+      isTheatre = !isTheatre;
+
+      defaultSize();
+      setPlayer();
+  } else {
+      width = $("body").innerWidth();
+      offset = 50;
+      height = $(window).height() - offset;
+
+      setPlayer();
+
+      isTheatre = !isTheatre;
+  }
+}
+
+function setPlayer() {
+    $("#player-api").css({
+        left: 0,
+        marginLeft: 0
+    });
+    $("#player-api").height(height);
+    $("#player-api").width(width);
+    $("video").height(height);
+    $("video").width(width);
+    $("video").css({
+        top: 0
+    });
+    $(".ytp-chrome-bottom").width(width - 24);
+    $("#placeholder-player").height(height);
+};
+
+function defaultSize() {
+    wWidth = window.innerWidth;
+    wHeight = window.innerHeight;
+    if (wWidth < 657) {
+        width = 426;
+        height = 240;
+    } else if (wWidth < 1293 || wHeight < 630) {
+        width = 640;
+        height = 360;
+    } else if (wWidth < 1720 || wHeight < 980) {
+        width = 854;
+        height = 480;
+    } else {
+        width = 1280;
+        height = 720;
+    }
+};
