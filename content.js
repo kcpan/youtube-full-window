@@ -9,8 +9,14 @@ if (document.getElementsByClassName("ytp-size-button")[0].title == "Default view
     isTheatre = false;
 }
 
-$(window).resize(function(){
-  changeSize();
+var resizeTimer;
+
+
+$(window).resize(function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        changeSize();
+    }, 250);
 });
 
 chrome.runtime.onMessage.addListener(
@@ -27,31 +33,29 @@ chrome.runtime.onMessage.addListener(
     });
 
 $(".ytp-size-button").click(function() {
-  changeSize();
+    isTheatre = !isTheatre;
+    changeSize();
 });
 
-function changeSize(){
-  if (isTheatre) {
-      isTheatre = !isTheatre;
-
-      defaultSize();
-      setPlayer();
-  } else {
-      width = $("body").innerWidth();
-      offset = 50;
-      height = $(window).height() - offset;
-
-      setPlayer();
-
-      isTheatre = !isTheatre;
-  }
+function changeSize() {
+    if (!isTheatre) {
+        defaultSize();
+        setPlayer();
+    } else {
+        width = $("body").innerWidth();
+        offset = 50;
+        height = $(window).height() - offset;
+        setPlayer();
+    }
 }
 
 function setPlayer() {
-    $("#player-api").css({
-        left: 0,
-        marginLeft: 0
-    });
+    if (isTheatre) {
+        $("#player-api").css({
+            left: 0,
+            marginLeft: 0
+        });
+    }
     $("#player-api").height(height);
     $("#player-api").width(width);
     $("video").height(height);
