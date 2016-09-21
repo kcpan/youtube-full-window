@@ -4,9 +4,6 @@
     "name": "Youtube Full Window",
     "description": "Makes current Youtube page fill the window.",
     "version": "1.0",
-    "page_action": {
-        "default_icon": "icon.png"
-    },
     "permissions": [
         "tabs", "declarativeContent"
     ],

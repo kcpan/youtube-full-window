@@ -2,15 +2,8 @@ var width;
 var offset;
 var height;
 
-var isTheatre = false;
-if (document.getElementsByClassName("ytp-size-button")[0].title == "Default view") {
-    isTheatre = true;
-} else {
-    isTheatre = false;
-}
-
+var isTheatre;
 var resizeTimer;
-
 
 $(window).resize(function() {
     clearTimeout(resizeTimer);
@@ -22,20 +15,26 @@ $(window).resize(function() {
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.text == "setSize") {
-            if ($(".ytp-size-button").attr("title") == "Default view") {
-                width = $("body").innerWidth();
-                offset = 50;
-                height = $(window).height() - offset;
 
-                setPlayer();
+            if (document.getElementsByClassName("ytp-size-button")[0].title == "Default view") {
+                isTheatre = true;
+            } else {
+                isTheatre = false;
             }
+
+            changeSize();
+            setPlayer();
+
+            $(".ytp-size-button").click(function() {
+                console.log("clicked");
+                isTheatre = !isTheatre;
+                changeSize();
+            });
         }
+
     });
 
-$(".ytp-size-button").click(function() {
-    isTheatre = !isTheatre;
-    changeSize();
-});
+
 
 function changeSize() {
     if (!isTheatre) {
